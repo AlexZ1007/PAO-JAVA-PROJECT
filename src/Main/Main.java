@@ -21,6 +21,8 @@ public class Main {
         String[] adminCommands={
                 "addUser - add a user",
         };
+        System.out.println("Welcome!");
+        System.out.println("Type help to view the available commands!");
         do{
             System.out.println("Enter command: ");
             command = scanner.nextLine();
@@ -50,10 +52,37 @@ public class Main {
                     if (service.getUserRole(userId).equals("admin"))
                         for (String cmd : adminCommands)
                             System.out.println(cmd);
-//                case "role":
-//                    if(userId == -1)
-//                        break;
-//                    System.out.println("    My role: " + service.getUserRole(userId));
+                    break;
+                case "addItem":
+                    if (!service.getUserRole(userId).equals("admin"))
+                        break;
+                    service.addItem();
+                    break;
+                case "bidItem":
+                    if (service.getUserRole(userId).equals("unregistered"))
+                        break;
+                    service.addBid(userId);
+                    break;
+                case "listItems":
+                    if (service.getUserRole(userId).equals("unregistered"))
+                        break;
+                    service.listAuctionItems();
+                    break;
+                case "openAuction":
+                    if (!service.getUserRole(userId).equals("admin"))
+                        break;
+                    service.openAuction();
+                    break;
+                case "closeAuction":
+                    if (!service.getUserRole(userId).equals("admin"))
+                        break;
+                    service.closeAuction();
+                    break;
+                case "auctionPrintWinners":
+                    if (service.getUserRole(userId).equals("unregistered"))
+                        break;
+                    service.auctionPrintWinners();
+                    break;
                 case "exit":
                     break;
                 default:

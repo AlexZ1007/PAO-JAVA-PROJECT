@@ -16,8 +16,11 @@ This is a platform where users can participate in online auctions by bidding on 
 
 ## Actions
 
-### As user
+### As an unregistred user
 - login
+- view help
+
+### As user
 - bid
 - view auctions list
 - view item last bid
@@ -25,7 +28,6 @@ This is a platform where users can participate in online auctions by bidding on 
 
 ### As admin
 - add user
-- create auction
-  - insert items in the auction
-- open / close auction
-- add items
+- insert items in the auction
+- open auction
+- close auction user
