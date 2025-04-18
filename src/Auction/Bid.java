@@ -9,7 +9,6 @@ public class Bid {
         this.userID = userID;
         this.itemID = itemID;
         this.amount = amount;
-        System.out.println("New Bid created");
     }
 
     @Override

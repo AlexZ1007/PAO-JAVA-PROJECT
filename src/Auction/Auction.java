@@ -36,6 +36,7 @@ public class Auction {
                 return;
             }
             bids.add(bid);
+            System.out.println("New Bid created");
         } else{
             System.out.println("Can't add any more bids! The auction is closed!");
         }
@@ -62,15 +63,25 @@ public class Auction {
 
         for (int i = 0; i < items.size(); i++) {
             int itemID = i;
-            Optional<Bid> maxBid = bids.stream()
-                    .filter(b -> b.getItemID() == itemID)
-                    .max(Comparator.comparingInt(Bid::getAmount));
 
-            if (maxBid.isPresent()) {
-                System.out.println("Max bid for item " + itemID + ": " + "by user with id: " + maxBid.get().getUserID());
-            } else {
-                System.out.println("No bids found for item " + itemID);
+            ArrayList<Bid> filteredBids = new ArrayList<>();
+
+            for (Bid bid : bids) {
+                if (bid.getItemID() == itemID) {
+                    filteredBids.add(bid);
+                }
             }
+
+            if(filteredBids.isEmpty()){
+                System.out.println("No bids found for item " + itemID);
+                return;
+            }
+
+            filteredBids.sort((b1, b2) -> Integer.compare(b2.getAmount(), b1.getAmount()));
+
+
+            System.out.println("Max bid for item " + itemID + " is " + filteredBids.get(0).getAmount() + " by user with id: " + filteredBids.get(0).getUserID());
+
         }
     }
 

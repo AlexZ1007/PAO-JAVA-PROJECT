@@ -12,15 +12,15 @@ import java.util.Scanner;
 
 public class Service {
     private ArrayList<User> users;
-    private int currentUserId = 0;
+    private int userInternalId = 0;
     private Auction auction;
 
     // Constructor
     public Service() {
         users = new ArrayList<>();
         auction = new Auction();
-        users.add(new User(currentUserId, "admin", "pass", "admin"));
-        currentUserId++;
+        users.add(new User(userInternalId, "admin", "pass", "admin"));
+        userInternalId++;
     }
 
     // Login method to authenticate users
@@ -122,4 +122,36 @@ public class Service {
     public void auctionPrintWinners(){
         auction.printWinners();
     }
+
+    public void addUser(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert a new user");
+        System.out.print("Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+        System.out.print("Role (admin | user): ");
+        String role = scanner.nextLine();
+
+        while(!role.equals("admin") && !role.equals("user")) {
+            System.out.println("Invalid role!");
+            System.out.println(role.length());;
+            System.out.print("Role (admin | user): ");
+            role = scanner.nextLine();
+        }
+
+        users.add(new User(userInternalId, name, password, role));
+        userInternalId++;
+        System.out.println("User created successfully!");
+    }
+
+    public void changeName(int userId){
+        if (userId < 0 || userId >= users.size()) return;
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("New name: ");
+        String name = scanner.nextLine();
+
+        users.get(userId).setName(name);
+    }
+
 }

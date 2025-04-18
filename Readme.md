@@ -19,15 +19,17 @@ This is a platform where users can participate in online auctions by bidding on 
 ### As an unregistred user
 - login
 - view help
+- exit
 
 ### As user
 - bid
-- view auctions list
-- view item last bid
-- view won items
+- view items
+- logout
+- view the winners of the auction
+- change name
 
 ### As admin
 - add user
 - insert items in the auction
 - open auction
-- close auction user
+- close auction

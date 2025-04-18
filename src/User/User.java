@@ -25,6 +25,10 @@ public class User {
         return role;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Boolean checkCredentials(String password) {
         return password.equals(this.password);
     }
