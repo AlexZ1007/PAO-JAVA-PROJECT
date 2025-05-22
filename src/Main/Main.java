@@ -30,6 +30,9 @@ public class Main {
                 "addUser - add a user",
                 "openAuction - open the auction",
                 "closeAuction - close the auction",
+                "loadAuction - load the data from a previous auction",
+                "saveAuction - save the auction",
+                "deleteAuction - delete the auction",
                 "createItem - Create a new item",
                 "updateItem - Update an existing item",
                 "deleteItem - Delete an existing item",
@@ -137,6 +140,27 @@ public class Main {
                         break;
                     }
                     service.closeAuction();
+                    break;
+                case "saveAuction":
+                    if (!service.getUserRole(userId).equals("admin")){
+                        System.out.println("You do not have permission for this command!");
+                        break;
+                    }
+                    service.saveAuction();
+                    break;
+                case "deleteAuction":
+                    if (!service.getUserRole(userId).equals("admin")){
+                        System.out.println("You do not have permission for this command!");
+                        break;
+                    }
+                    service.deleteAuction();
+                    break;
+                case "loadAuction":
+                    if (!service.getUserRole(userId).equals("admin")){
+                        System.out.println("You do not have permission for this command!");
+                        break;
+                    }
+                    service.loadAuction();
                     break;
                 case "auctionPrintWinners":
                     if (service.getUserRole(userId).equals("unregistered")){

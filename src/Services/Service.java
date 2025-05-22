@@ -2,6 +2,7 @@ package Services;
 
 import Auction.Auction;
 import Auction.Bid;
+import DB.AuctionModel;
 import DB.ItemModel;
 import Item.*;
 import User.User;
@@ -16,6 +17,8 @@ public class Service {
     private Auction auction;
     private ArrayList<Item> items;
     private int itemInternalId = 0;
+    private HashMap<Integer, String> auctionHistory;
+
 
 
     // Constructor
@@ -31,6 +34,7 @@ public class Service {
         items = ItemModel.getAllItems();
         itemInternalId=ItemModel.getHighestItemId() + 1;
 
+        auctionHistory = AuctionModel.getAllAuctions();
     }
 
     // Login method to authenticate users
@@ -289,5 +293,55 @@ public class Service {
 
     }
 
+
+    public void saveAuction() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter auction name: ");
+        String name = scanner.nextLine();
+
+        if (auction.getAuctionID() == 0) {
+            int id = AuctionModel.create(auction, name);
+            auction.setAuctionID(id);
+            System.out.println("Auction created");
+
+        } else {
+            AuctionModel.update(auction, auction.getAuctionID(), name);
+            System.out.println("Auction updated successfully.");
+
+        }
+    }
+
+    public void deleteAuction() {
+        AuctionModel.delete(auction.getAuctionID());
+        auction = new Auction();
+        System.out.println("Auction deleted successfully!");
+    }
+
+
+    public void loadAuction() {
+        Scanner scanner = new Scanner(System.in);
+
+        if (this.auctionHistory.isEmpty()) {
+            System.out.println("No auctions found.");
+            return;
+        }
+
+        System.out.println("Available Auctions:");
+        for (Map.Entry<Integer, String> entry : this.auctionHistory.entrySet()) {
+            System.out.println("ID: " + entry.getKey() + " | Name: " + entry.getValue());
+        }
+
+        System.out.print("Enter the ID of the auction to load: ");
+        int selectedId = scanner.nextInt();
+
+        if (!this.auctionHistory.containsKey(selectedId)) {
+            System.out.println("Invalid auction ID.");
+            return;
+        }
+
+        auction = new Auction(selectedId);
+        System.out.println("Auction loaded successfully!");
+
+    }
 
 }

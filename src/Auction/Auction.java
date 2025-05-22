@@ -1,5 +1,6 @@
 package Auction;
 
+import DB.AuctionModel;
 import DB.ItemModel;
 import Item.Item;
 
@@ -11,12 +12,20 @@ public class Auction {
     boolean open;
     ArrayList<Item> items;
     ArrayList<Bid> bids;
+    int auctionID;
 
     public Auction(){
         open = false;
         items = new ArrayList<>();
-//        items = ItemModel.getAllItems();
         bids = new ArrayList<>();
+        auctionID = 0;      // This is  a new auction
+    }
+
+    public Auction(int auctionID){
+        open = false;
+        items = AuctionModel.getItems(auctionID);
+        this.bids = AuctionModel.getBids(auctionID);
+        this.auctionID = auctionID;
     }
 
     public void changeState(){
@@ -107,4 +116,15 @@ public class Auction {
         ItemModel.deleteItem(itemId);
     }
 
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
+    public int getAuctionID() {
+        return auctionID;
+    }
+
+    public void setAuctionID(int auctionID) {
+        this.auctionID = auctionID;
+    }
 }
