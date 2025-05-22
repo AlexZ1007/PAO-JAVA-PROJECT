@@ -2,43 +2,55 @@ package Services;
 
 import Auction.Auction;
 import Auction.Bid;
-import Item.Item;
-import Item.Book;
-import Item.Painting;
-import Item.Statue;
+import DB.ItemModel;
+import Item.*;
 import User.User;
-import java.util.ArrayList;
-import java.util.Scanner;
+
+import java.util.*;
+
+import DB.UserModel;
 
 public class Service {
-    private ArrayList<User> users;
+    private Map<Integer, User> users;
     private int userInternalId = 0;
     private Auction auction;
+    private ArrayList<Item> items;
+    private int itemInternalId = 0;
+
 
     // Constructor
     public Service() {
-        users = new ArrayList<>();
         auction = new Auction();
-        users.add(new User(userInternalId, "admin", "pass", "admin"));
-        userInternalId++;
+
+        users = new HashMap<>();
+        for (User user : UserModel.getAllUsers()) {
+            users.put(user.getUserId(), user);
+        }
+        userInternalId=UserModel.getHighestUserId() + 1;
+
+        items = ItemModel.getAllItems();
+        itemInternalId=ItemModel.getHighestItemId() + 1;
+
     }
 
     // Login method to authenticate users
     public int login(String name, String password) {
-        for (User user : users) {
+        for (User user : users.values()) {
             if (user != null && user.getName().equals(name) && user.checkCredentials(password)) {
+                System.out.println(user.getRole());
                 return user.getUserId();
             }
         }
         return -1;
     }
 
-    public String getUserRole(int userId){
-        if (userId < 0 || userId >= users.size() || users.get(userId) == null) return "unregistered";
-        return users.get(userId).getRole();
+    public String getUserRole(int userId) {
+        User user = users.get(userId);
+        return user != null ? user.getRole() : "unregistered";
     }
 
-    public void addItem() {
+
+    public void createItem() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert a new item: ");
         System.out.print("Item type (book | painting | statue): ");
@@ -52,6 +64,7 @@ public class Service {
         int startPrice = scanner.nextInt();
         scanner.nextLine(); // consume newline
 
+
         switch (type) {
             case "book":
                 System.out.print("Year of publication: ");
@@ -60,24 +73,49 @@ public class Service {
                 System.out.print("Number of pages: ");
                 int numberOfPages = scanner.nextInt();
                 scanner.nextLine(); // consume newline
-                auction.addItem(new Book(startPrice, name, author, yearOfPublication, numberOfPages));
+                Book book = new Book(itemInternalId, startPrice, name, author, yearOfPublication, numberOfPages);
+                items.add(book);
+                ItemModel.createItem(book);
+                itemInternalId++;
                 break;
 
             case "painting":
                 System.out.print("Painting type: ");
                 String paintingType = scanner.nextLine();
-                auction.addItem(new Painting(startPrice, name, author, paintingType));
+                Painting painting = new Painting(itemInternalId, startPrice, name, author, paintingType);
+                itemInternalId++;
+                items.add(painting);
+                ItemModel.createItem(painting);
                 break;
 
             case "statue":
                 System.out.print("Material: ");
                 String material = scanner.nextLine();
-                auction.addItem(new Statue(startPrice, name, author, material));
+                Statue statue = new Statue(itemInternalId, startPrice, name, author, material);
+                itemInternalId++;
+                items.add(statue);
+                ItemModel.createItem(statue);
                 break;
 
             default:
                 System.out.println("Invalid type; insertion failed");
         }
+    }
+
+    public void addItem() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Item id: ");
+        int itemId = scanner.nextInt();
+
+        if(itemId < 0 || itemId > items.size()) {
+            System.out.println("Invalid item id");
+            return;
+        }
+
+        Item item = items.get(itemId);
+        auction.addItem(item);
+        System.out.println("Item added to the auction");
+
     }
 
     public void addBid(int userId) {
@@ -97,6 +135,13 @@ public class Service {
         Bid bid = new Bid(userId, itemID, amount);
         auction.addBid(bid);
 
+    }
+
+    public void listItems() {
+        for(int i = 0; i < items.size(); i++){
+            System.out.println("Item id: " + i);
+            System.out.println(items.get(i).toString());
+        }
     }
 
     public void listAuctionItems(){
@@ -139,19 +184,110 @@ public class Service {
             System.out.print("Role (admin | user): ");
             role = scanner.nextLine();
         }
+        User user = new User(userInternalId, name, password, role);
+        users.put(user.getUserId(), user);
+        UserModel.createUser(user);
 
-        users.add(new User(userInternalId, name, password, role));
         userInternalId++;
         System.out.println("User created successfully!");
     }
 
     public void changeName(int userId){
-        if (userId < 0 || userId >= users.size()) return;
+
+        User user = users.get(userId);
+        if (user == null) return;
+
         Scanner scanner = new Scanner(System.in);
         System.out.print("New name: ");
         String name = scanner.nextLine();
 
         users.get(userId).setName(name);
+        UserModel.updateUser(user);
+        System.out.println("Name changed successfully!");
     }
+
+    public void deleteUser(int userId) {
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("User ID: ");
+        int deletedUserId = scanner.nextInt();
+
+
+        if (!users.containsKey(deletedUserId)) {
+            System.out.println("User not found.");
+            return;
+        }
+
+        if(deletedUserId == userId) {
+            System.out.println("Cannot delete yourself!");
+            return;
+        }
+
+        users.remove(deletedUserId);
+        UserModel.deleteUser(deletedUserId);
+        System.out.println("User deleted successfully.");
+
+    }
+
+
+    public void listUsers() {
+        if (users.isEmpty()) {
+            System.out.println("No users found.");
+            return;
+        }
+
+        System.out.println("User List:");
+        for (User user : users.values()) {
+            System.out.println("ID: " + user.getUserId() +
+                    " | Name: " + user.getName() +
+                    " | Role: " + user.getRole());
+        }
+    }
+
+    public void deleteItem() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Item ID: ");
+        int itemIndex = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        if (itemIndex < 0 || itemIndex >= items.size()) {
+            System.out.println("Invalid item ID.");
+            return;
+        }
+
+        Item item = items.get(itemIndex);
+        ItemModel.deleteItem(item.getId());
+        items.remove(itemIndex);
+
+        auction.deleteItem(item.getId());
+
+        System.out.println("Item deleted successfully.");
+
+    }
+    public void updateItemStartingPrice() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Item ID: ");
+        int itemIndex = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        if (itemIndex < 0 || itemIndex >= items.size()) {
+            System.out.println("Invalid item ID.");
+            return;
+        }
+
+        Item item = items.get(itemIndex);
+        System.out.print("New starting price (current: " + item.getStartingPrice() + "): ");
+        int newPrice = scanner.nextInt();
+        scanner.nextLine();
+
+        item.setStartingPrice(newPrice);
+        ItemModel.updateItem(item);
+
+        System.out.println("Starting price updated successfully.");
+
+        auction.updateItem(item);
+
+    }
+
 
 }

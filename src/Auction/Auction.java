@@ -1,5 +1,6 @@
 package Auction;
 
+import DB.ItemModel;
 import Item.Item;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Auction {
     public Auction(){
         open = false;
         items = new ArrayList<>();
+//        items = ItemModel.getAllItems();
         bids = new ArrayList<>();
     }
 
@@ -88,6 +90,21 @@ public class Auction {
     private boolean isBidInvalid(Bid bid){
         return (bid.getItemID() >= items.size() || bid.getItemID() < 0)
                 || bid.getAmount() < 0 || items.get(bid.getItemID()).getStartingPrice() > bid.getAmount();
+    }
+
+    public void updateItem(Item updatedItem) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getId() == updatedItem.getId()) {
+                items.set(i, updatedItem);
+                return;
+            }
+        }
+    }
+
+    public void deleteItem(int itemId) {
+        items.removeIf(item -> item.getId() == itemId);
+        bids.removeIf(bid -> bid.getItemID() == itemId);
+        ItemModel.deleteItem(itemId);
     }
 
 }

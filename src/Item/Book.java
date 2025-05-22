@@ -4,8 +4,8 @@ public class Book extends Item {
     private int yearOfPublication;
     private int numberOfPages;
 
-    public Book(int startingPrice, String name, String author, int yearOfPublication, int numberOfPages) {
-        super(startingPrice, name, author);
+    public Book(int id, int startingPrice, String name, String author, int yearOfPublication, int numberOfPages) {
+        super(id, startingPrice, name, author);
         this.yearOfPublication = yearOfPublication;
         this.numberOfPages = numberOfPages;
     }
@@ -17,5 +17,21 @@ public class Book extends Item {
                 ", yearOfPublication='" + yearOfPublication + '\'' +
                 super.toString() +
                 '}';
+    }
+
+    public int getYearOfPublication() {
+        return yearOfPublication;
+    }
+
+    public int getNumberOfPages() {
+        return numberOfPages;
+    }
+
+    public void setYearOfPublication(int yearOfPublication) {
+        this.yearOfPublication = yearOfPublication;
+    }
+
+    public void setNumberOfPages(int numberOfPages) {
+        this.numberOfPages = numberOfPages;
     }
 }

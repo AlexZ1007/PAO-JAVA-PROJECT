@@ -29,6 +29,10 @@ public class User {
         this.name = name;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public Boolean checkCredentials(String password) {
         return password.equals(this.password);
     }
