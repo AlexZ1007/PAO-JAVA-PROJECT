@@ -1,5 +1,6 @@
 package Main;
 
+import Audit.Audit;
 import Services.Service;
 
 import java.util.Scanner;
@@ -19,11 +20,12 @@ public class Main {
         String[] userCommands={
                 "------USER------",
                 "logout - logout ",
-                "addBid - add a bid for an item",
+                "bidItem - add a bid for an item",
                 "listItems - list all items",
                 "listAuctionItems - list all items in the auction",
                 "changeName - change the name of the current user",
                 "auctionPrintWinners - print the winners of the auction",
+                "removeMyBids - remove all my bids",
         };
         String[] adminCommands={
                 "------ADMIN------",
@@ -49,6 +51,7 @@ public class Main {
 
             switch (command) {
                 case "login":
+                    Audit.logAction("login");
                     if(userId != -1){
                         System.out.println("Already logged in!");
                         break;
@@ -65,10 +68,12 @@ public class Main {
                         System.out.println("    User logged in! ");
                     break;
                 case "logout":
+                    Audit.logAction("logout");
                     System.out.println("    Log out!");
                     userId = -1;
                     break;
                 case "help":
+                    Audit.logAction("help");
                     for (String cmd : generalCommands)
                         System.out.println(cmd);
                     if (userId != -1)
@@ -79,6 +84,7 @@ public class Main {
                             System.out.println(cmd);
                     break;
                 case "addItem":
+                    Audit.logAction("addItem");
                     if (!service.getUserRole(userId).equals("admin")) {
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -86,6 +92,7 @@ public class Main {
                     service.addItem();
                     break;
                 case "createItem":
+                    Audit.logAction("createItem");
                     if (!service.getUserRole(userId).equals("admin")) {
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -93,6 +100,7 @@ public class Main {
                     service.createItem();
                     break;
                 case "updateItem":
+                    Audit.logAction("updateItem");
                     if (!service.getUserRole(userId).equals("admin")) {
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -100,6 +108,7 @@ public class Main {
                     service.updateItemStartingPrice();
                     break;
                 case "deleteItem":
+                    Audit.logAction("deleteItem");
                     if (!service.getUserRole(userId).equals("admin")) {
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -107,13 +116,23 @@ public class Main {
                     service.deleteItem();
                     break;
                 case "bidItem":
+                    Audit.logAction("bidItem");
                     if (service.getUserRole(userId).equals("unregistered")){
                         System.out.println("You do not have permission for this command!");
                         break;
                     }
                     service.addBid(userId);
                     break;
+                case "removeMyBids":
+                    Audit.logAction("removeMyBids");
+                    if (service.getUserRole(userId).equals("unregistered")){
+                        System.out.println("You do not have permission for this command!");
+                        break;
+                    }
+                    service.removeAllBidsByUser(userId);
+                    break;
                 case "listAuctionItems":
+                    Audit.logAction("listAuctionItems");
                     if (service.getUserRole(userId).equals("unregistered")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -121,6 +140,7 @@ public class Main {
                     service.listAuctionItems();
                     break;
                 case "listItems":
+                    Audit.logAction("listItems");
                     if (service.getUserRole(userId).equals("unregistered")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -128,6 +148,7 @@ public class Main {
                     service.listItems();
                     break;
                 case "openAuction":
+                    Audit.logAction("openAuction");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -135,6 +156,7 @@ public class Main {
                     service.openAuction();
                     break;
                 case "closeAuction":
+                    Audit.logAction("closeAuction");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -142,6 +164,7 @@ public class Main {
                     service.closeAuction();
                     break;
                 case "saveAuction":
+                    Audit.logAction("saveAuction");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -149,6 +172,7 @@ public class Main {
                     service.saveAuction();
                     break;
                 case "deleteAuction":
+                    Audit.logAction("deleteAuction");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -156,6 +180,7 @@ public class Main {
                     service.deleteAuction();
                     break;
                 case "loadAuction":
+                    Audit.logAction("loadAuction");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -163,6 +188,7 @@ public class Main {
                     service.loadAuction();
                     break;
                 case "auctionPrintWinners":
+                    Audit.logAction("auctionPrintWinners");
                     if (service.getUserRole(userId).equals("unregistered")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -170,6 +196,7 @@ public class Main {
                     service.auctionPrintWinners();
                     break;
                 case "addUser":
+                    Audit.logAction("addUser");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -177,6 +204,7 @@ public class Main {
                     service.addUser();
                     break;
                 case "changeName":
+                    Audit.logAction("changeName");
                     if (service.getUserRole(userId).equals("unregistered")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -184,6 +212,7 @@ public class Main {
                     service.changeName(userId);
                     break;
                 case "listUsers":
+                    Audit.logAction("listUsers");
                     System.out.println(service.getUserRole(userId));
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
@@ -192,6 +221,7 @@ public class Main {
                     service.listUsers();
                     break;
                 case "deleteUser":
+                    Audit.logAction("deleteUser");
                     if (!service.getUserRole(userId).equals("admin")){
                         System.out.println("You do not have permission for this command!");
                         break;
@@ -199,6 +229,7 @@ public class Main {
                     service.deleteUser(userId);
                     break;
                 case "exit":
+                    Audit.logAction("exit");
                     break;
                 default:
                     System.out.println("Invalid command");

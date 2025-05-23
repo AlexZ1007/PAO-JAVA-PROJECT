@@ -1,6 +1,7 @@
 package Auction;
 
 import DB.AuctionModel;
+import DB.BidModel;
 import DB.ItemModel;
 import Item.Item;
 
@@ -24,7 +25,7 @@ public class Auction {
     public Auction(int auctionID){
         open = false;
         items = AuctionModel.getItems(auctionID);
-        this.bids = AuctionModel.getBids(auctionID);
+        this.bids = BidModel.getBidsByAuctionId(auctionID);
         this.auctionID = auctionID;
     }
 
@@ -116,8 +117,22 @@ public class Auction {
         ItemModel.deleteItem(itemId);
     }
 
+    public void removeBidsByUser(int userID) {
+        if(!open){
+            System.out.println("Auction is already closed!");
+        }
+
+        bids.removeIf(bid -> bid.getUserID() == userID);
+        BidModel.deleteBidsFromUser(userID, auctionID);
+        System.out.println("Bids removed");
+    }
+
     public ArrayList<Item> getItems() {
         return items;
+    }
+
+    public ArrayList<Bid> getBids() {
+        return bids;
     }
 
     public int getAuctionID() {

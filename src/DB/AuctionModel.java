@@ -155,30 +155,4 @@ public class AuctionModel {
         return items;
     }
 
-    public static ArrayList<Bid> getBids(int auctionId) {
-        ArrayList<Bid> bids = new ArrayList<>();
-        String sql = "SELECT b.* FROM bids b " +
-                "JOIN auction_items ai ON b.item_id = ai.item_id " +
-                "WHERE ai.auction_id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, auctionId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                bids.add(new Bid(
-                        rs.getInt("user_id"),
-                        rs.getInt("item_id"),
-                        rs.getInt("amount")
-                ));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return bids;
-    }
 }

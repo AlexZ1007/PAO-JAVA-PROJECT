@@ -3,6 +3,7 @@ package Services;
 import Auction.Auction;
 import Auction.Bid;
 import DB.AuctionModel;
+import DB.BidModel;
 import DB.ItemModel;
 import Item.*;
 import User.User;
@@ -307,8 +308,9 @@ public class Service {
         } else {
             AuctionModel.update(auction, auction.getAuctionID(), name);
             System.out.println("Auction updated successfully.");
-
         }
+
+        this.saveAuctionBids();
     }
 
     public void deleteAuction() {
@@ -344,4 +346,19 @@ public class Service {
 
     }
 
+    public void removeAllBidsByUser(int userId) {
+        auction.removeBidsByUser(userId);
+    }
+
+    private void saveAuctionBids() {
+        for (Bid bid : auction.getBids()) {
+            HashMap<String, Integer> bidInfo = BidModel.getBidIdAndAmount( auction.getAuctionID(), bid.getUserID(), bid.getItemID());
+
+            if (bidInfo.get("bid_id") != -1 && bidInfo.get("amount") < bid.getAmount()) {
+                BidModel.updateBidAmount(bidInfo.get("bid_id"), bid.getAmount());
+            } else if (bidInfo.get("bid_id") == -1) {
+                BidModel.createBid(bid, auction.getAuctionID());
+            }
+        }
+    }
 }

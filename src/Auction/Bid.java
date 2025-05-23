@@ -20,13 +20,13 @@ public class Bid {
                 '}';
     }
 
-    int getUserID() {
+    public int  getUserID() {
         return userID;
     }
-    int getItemID() {
+    public int getItemID() {
         return itemID;
     }
-    int getAmount() {
+    public int getAmount() {
         return amount;
     }
 }
